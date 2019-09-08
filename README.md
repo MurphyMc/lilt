@@ -8,6 +8,8 @@ It utilizes Rob King's Tiny Mock Terminal Library (libtmt) -- or my fork of
 it -- to do the actual terminal escape sequence parsing, and it uses SDL1
 to do the rendering, input, etc.
 
+![Antsy screenshot](screenshot.png)
+
 ## Compiling
 
 You need SDL 1.2.  On Ubuntu, `apt install libsdl1.2-dev` should do it.
