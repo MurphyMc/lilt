@@ -1,0 +1,9 @@
+.rogo
+CMakeCache.txt
+CMakeFiles
+Makefile
+antsy
+cmake_install.cmake
+libtmt
+*.swp
+*.swo

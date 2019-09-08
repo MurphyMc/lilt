@@ -12,6 +12,18 @@ to do the rendering, input, etc.
 
 ## Compiling
 
+### Rogo
+
+To compile Antsy using the Rogo build system, install Rogue 1.5.1 or better from here:
+
+[https://github.com/AbePralle/Rogue](https://github.com/AbePralle/Rogue)
+
+and then execute the following to build antsy on Ubunto or macOS (antsy currently compiles but does not render correctly on macOS):
+
+    rogo
+
+### CMake
+
 You need SDL 1.2.  On Ubuntu, `apt install libsdl1.2-dev` should do it.
 
 You need cmake.  On Ubuntu, `apt install cmake` should do it.
@@ -20,9 +32,6 @@ You need libtmt.  `git clone https://github.com/MurphyMc/libtmt` should
 do it.
 
 You should then be able to build with `cmake --build .`.
-
-If you want xterm window title setting, you'll need to enable
-`ANSTY_TITLE_SET`.
 
 ## Commandline options
 

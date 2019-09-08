@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -138,6 +138,8 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
       {
         key = TMT_KEY_BACK_TAB;
       }
+      break;
+    default:
       break;
   }
   char ch[2] = {0};
@@ -530,7 +532,7 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
     // Draw blink as bright background
     // Maybe should do real blink?
     bg += 8;
-    if (fg == bg & !c->a.invisible) fg -= 8;
+    if (fg == bg && !c->a.invisible) fg -= 8;
   }
   if (c->a.reverse)
   {
@@ -670,5 +672,7 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
       break;
     }
 #endif
+    default:
+      break;
   }
 }
