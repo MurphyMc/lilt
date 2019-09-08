@@ -32,4 +32,4 @@ add_executable(antsy
 find_package(SDL REQUIRED)
 include_directories(${SDL_INCLUDE_DIR})
 
-target_link_libraries(antsy SDL)
+target_link_libraries(antsy ${SDL_LIBRARY})
