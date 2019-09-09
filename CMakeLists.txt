@@ -23,6 +23,10 @@ if (ANTSY_TITLE_SET)
   add_definitions(-DANTSY_TITLE_SET)
 endif ()
 
+if (DEFINED MAC_SDK_ROOT)
+  set(CMAKE_C_FLAGS "--sysroot ${MAC_SDK_ROOT} ${CMAKE_C_FLAGS}")
+endif ()
+
 project (antsy)
 add_executable(antsy
   antsy.c
