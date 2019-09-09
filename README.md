@@ -10,15 +10,44 @@ to do the rendering, input, etc.
 
 ![Antsy screenshot](screenshot.png)
 
-## Compiling
+## Features
+
+* Very simple/lightweight
+* Nice default font and color scheme
+* All resources get compiled into the binary
+* Good enough emulation for vim and tmux
+* X10-style mouse support (works in vim)
+* Simple dependencies (just SDL and the libtmt repository)
+* Good for constrained systems (uses vfork() for systems with no MMU, uses
+  only a single thread)
+
+Antsy should be fairly portable.  It currently has been tested with Linux
+and macOS (see the Building section for more on using it in macOS).
+
+## Building
+
+Antsy can be compiled either using the Rogo build system or using CMake.
+These two options are detailed in the following subsections.
+
+For simple scenarios, it can also be pretty trivially compiled entirely
+by hand -- just compile `antsy.c` and `libtmt/tmt.c` and link them with
+libSDL.)
+
+With macOS, antsy takes a bit of effort if you're using Mojave because
+of a bug in SDL that hasn't been fixed yet, but you can get it working
+by either patching your SDL or building using an older version of the
+macOS SDK.  If you use the Rogo build method, this is done for you
+automatically.  If not, the easiest way to do it is to download Xcode
+10.1 from Apple and use that to build it.
 
 ### Rogo
 
-To compile Antsy using the Rogo build system, install Rogue 1.5.1 or better from here:
+To compile Antsy using the Rogo build system, install Rogue 1.5.1 or better
+from here:
 
 [https://github.com/AbePralle/Rogue](https://github.com/AbePralle/Rogue)
 
-and then execute the following to build antsy on Ubunto or macOS (antsy currently compiles but does not render correctly on macOS):
+Then execute the following to build Antsy on Ubuntu or macOS:
 
     rogo
 
@@ -31,12 +60,16 @@ You need cmake.  On Ubuntu, `apt install cmake` should do it.
 You need libtmt.  `git clone https://github.com/MurphyMc/libtmt` should
 do it.
 
+Configure the project using `cmake .` or `ccmake .`  The stock libtmt
+(if you're using it instead of Murphy's fork) will require you to set
+the `ANTSY_TITLE_SET` option to False.
+
 You should then be able to build with `cmake --build .`.
 
 ## Commandline options
 
 * `-t TITLE` - Sets the initial window title
-* `-e CMD ARGS...` - Run command instead of a shell
+* `-e CMD ARGS...` - Run command instead of a shell (use as last argument)
 * `-b MSEC` - Blink cursor every MSEC milliseconds
 * `-d WxH` - Set window width and height (in characters)
 
