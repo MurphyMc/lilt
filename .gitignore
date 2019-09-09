@@ -7,3 +7,4 @@ cmake_install.cmake
 libtmt
 *.swp
 *.swo
+MacOSX10.13.sdk
