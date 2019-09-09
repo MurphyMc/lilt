@@ -11,6 +11,8 @@
 #$ LIBRARIES(Linux) = libsdl1.2-dev(sdl)
 #$ LIBRARIES(macOS) = sdl
 #$ LIBRARIES = cmake
+#$ LIBRARIES = curl
+#$ LIBRARIES = xz
 
 # description()s are optional - Rogo uses introspection to determine which commands are available.
 # 'rogo help default' displays the description for "default", etc.
@@ -22,13 +24,44 @@ routine rogo_default
     execute @|git clone https://github.com/MurphyMc/libtmt
   endIf
 
+  if (System.is_macos)
+    if (not File.exists("MacOSX10.13.sdk"))
+      println @|====================================================================================================
+               |ATTENTION
+               |
+               |macOS SDK 10.13 is required to build antsy.
+               |
+               |You can obtain a copy yourself and place it in this folder as MacOSX10.13.sdk/ or else type 'yes' to
+               |automatically download a version from https://github.com/phracker. We make no warranties as to the
+               |integrity or safety of this SDK.
+               |====================================================================================================
+      println "Download macOS 10.13 SDK from the following URL?\n"
+      println "  https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz\n"
+      if ("yes".begins_with(Console.input("(yes/no)> ").to_lowercase))
+        execute @|curl -L "https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz" -o MacOSX10.13.sdk.tar.xz
+
+        local reference_sha = "b28b6489ae9287b4f3575bdd6d5450f33e6ea1d2f706d5579f839a494937e8ab"
+        # This is the sha256 of phracker's MacOSX10.13.sdk.tar.xz as of 2019.09.09. While we neither
+        # trust nor distrust this SDK, we will at least make sure it isn't unexpectedly modified.
+        if (sha256 != reference_sha)
+          throw Error( "ERROR: MacOSX10.13.sdk.tar.gz sha256 has changed - expected $, got $." (reference_sha,sha256) )
+        endIf
+
+        execute @|xz -d MacOSX10.13.sdk.tar.xz
+        execute @|tar -xf MacOSX10.13.sdk.tar
+        File.delete( "MacOSX10.13.sdk.tar" )
+      else
+        throw Error( "Missing MacOSX10.13.sdk/" )
+      endIf
+    endIf
+  endIf
+
   if (File.exists("CMakeCache.txt"))
     # See if CMake is cached to a different folder (easily happens when using Parallels)
     contingent
       local cmake_cachefile_dir = File.load_as_string( "CMakeCache.txt" ).split( '\n' ).find( $.contains("CMAKE_CACHEFILE_DIR") )
       necessary (cmake_cachefile_dir.exists)
       local cmake_path = cmake_cachefile_dir.value.after_first( "INTERNAL=" )
-      local cwd  = Process.run( "pwd", &inherit_environment )->String.trimmed
       necessary (cmake_path == cwd)
     unsatisfied
       rogo_clean
@@ -36,10 +69,25 @@ routine rogo_default
   endIf
 
   if (not File.exists("CMakeCache.txt"))
-    execute @|cmake .
+    if (System.is_macos)
+      execute( ''cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DMAC_SDK_ROOT="$/MacOSX10.13.sdk" .'' (cwd) )
+    else
+      execute( "cmake ." )
+    endIf
   endIf
 
   execute( "cmake --build ." )
+endRoutine
+
+routine sha256->String
+  local cmd = "shasum -a 256 MacOSX10.13.sdk.tar.xz"
+  local result = Process.run( cmd )
+  if (not result.success) throw Error( "ERROR running: " + cmd )
+  return result->String.before_first( ' ' ).trimmed
+endRoutine
+
+routine cwd->String
+  return Process.run( "pwd", &inherit_environment )->String.trimmed
 endRoutine
 
 routine rogo_clean
