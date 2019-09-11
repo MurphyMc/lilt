@@ -180,11 +180,14 @@ static bool init_master (char * argv0, char * cshell, char ** run_cmd)
   int slave_fd = open(ptsname(master_fd), O_RDWR);
   if (slave_fd < 0) return false;
 
-  char ** argv = calloc(4 + cmd_len, sizeof(char *));
+  char ** argv = calloc(6 + cmd_len, sizeof(char *));
+  int a = 0;
   argv[0] = argv0;
-  argv[1] = "-s";
-  if (asprintf(&argv[2], "%i,%i", slave_fd, master_fd) == -1) return false;
-  for (int i = 0; i < cmd_len; i++) argv[3+i] = cmd[i];
+  argv[1] = "-d";
+  if (asprintf(&argv[2], "%ix%i", term_w, term_h) == -1) return false;
+  argv[3] = "-s";
+  if (asprintf(&argv[4], "%i,%i", slave_fd, master_fd) == -1) return false;
+  for (int i = 0; i < cmd_len; i++) argv[5+i] = cmd[i];
 
   if (vfork() == 0)
   {
@@ -194,6 +197,7 @@ static bool init_master (char * argv0, char * cshell, char ** run_cmd)
 
   // Parent
   free(argv[2]);
+  free(argv[4]);
   free(argv);
 
   close(slave_fd);
@@ -274,7 +278,7 @@ int main (int argc, char * argv[])
     switch (opt)
     {
       case 's':
-        init_slave(optarg, argv+opt_count+2);
+        init_slave(optarg, argv+optind);
         break;
       case 'e':
         opt_e_index = opt_count;
