@@ -80,7 +80,8 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
       key = TMT_KEY_HOME;
       break;
     case SDLK_END:
-      key = TMT_KEY_END;
+      //key = TMT_KEY_END;
+      key = "\033OF";
       break;
     case SDLK_INSERT:
       key = TMT_KEY_INSERT;
