@@ -346,7 +346,7 @@ int main (int argc, char * argv[])
   if (!init_master(argv[0], cshell, run_cmd)) return 2;
 
   SDL_SetColors(font, pal, 0, 2);
-  SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, colors[0].r, colors[0].g, colors[0].b));
+  SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
   SDL_Flip(screen);
 
   tmt_write(vt, "", 0);
