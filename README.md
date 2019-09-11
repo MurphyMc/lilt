@@ -22,7 +22,7 @@ to do the rendering, input, etc.
   only a single thread)
 
 Antsy should be fairly portable.  It currently has been tested with Linux
-and macOS (see the Building section for more on using it in macOS).
+and macOS (see the "Building for macOS" section for more on the latter).
 
 ## Building
 
@@ -33,12 +33,7 @@ For simple scenarios, it can also be pretty trivially compiled entirely
 by hand -- just compile `antsy.c` and `libtmt/tmt.c` and link them with
 libSDL.)
 
-With macOS, antsy takes a bit of effort if you're using Mojave because
-of a bug in SDL that hasn't been fixed yet, but you can get it working
-by either patching your SDL or building using an older version of the
-macOS SDK.  If you use the Rogo build method, this is done for you
-automatically.  If not, the easiest way to do it is to download Xcode
-10.1 from Apple and use that to build it.
+If you're building on macOS, please see the subsection below.
 
 ### Rogo
 
@@ -65,6 +60,40 @@ Configure the project using `cmake .` or `ccmake .`  The stock libtmt
 the `ANTSY_TITLE_SET` option to False.
 
 You should then be able to build with `cmake --build .`.
+
+### Building for macOS
+
+With macOS, building Antsy probably takes a bit of effort if you're
+using Mojave (and probably future versions).  A change in Mojave results
+in SDL-based applications having blank windows (this problem isn't unique
+to Antsy and affects other things including stuff like PyGame).  Until
+it gets fixed, you might try building your own version of SDL using a this
+[patch](https://github.com/joncampbell123/dosbox-x/commit/fdf6061c)
+from DOSBox-X (if you do this, let me know if it works!).
+
+If that sounds like a pain, the other option is to build Antsy using an
+older version of the macOS SDK.  If you use the Rogo build method above,
+it will do this, including offering to download the SDK for you (though
+note that it downloads it *from an unknown third party* which is not
+necessarily the safest thing to do).
+
+If you'd rather do it by hand but you don't have an old Xcode installed,
+here are the basic steps to do it using the "Command Line Tools for
+Xcode 10.1" which are available form Apple's developer website.
+
+You can find the command line tools on Apple's developer website in the
+["more" downloads area](https://developer.apple.com/download/more/).  You
+want "Command Line Tools (macOS 10.13) for Xcode 10.1".  Mount the `.dmg`
+file.  Then in a terminal in the Antsy directory, you should be able to do
+something like:
+```
+pkgutil --expand-full /Volumes/Command*Tools/*10.13*.pkg CLT10_1
+SDK=$(pwd)/$(find CLT10_1 -name MacOSX.sdk)
+cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DMAC_SDK_ROOT="$SDK" .
+```
+
+If all goes successsfully, you should now be able to do `cmake --build .`
+as usual!
 
 ## Commandline options
 
