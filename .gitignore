@@ -1,10 +1,14 @@
 *.dmg
 *.swo
 *.swp
-.rogo
+.*
+a.out
+*.old
+*.bak
 CMakeCache.txt
 CMakeFiles
 MacOSX10.13.sdk
+MacOSX.sdk
 Makefile
 antsy
 cmake_install.cmake
