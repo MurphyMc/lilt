@@ -18,6 +18,10 @@
 int term_w = 80;
 int term_h = 25; // vt52 was 24, but DOS machines usually 25
 
+// Drawing position tweaks
+int tweakx = 0;
+int tweaky = 0;
+
 #include "font.h"
 #include "palette.h"
 
@@ -267,6 +271,7 @@ static bool set_dimensions (const char * d)
 int main (int argc, char * argv[])
 {
   int cursor_blink_delay = 0; // 0 is disable
+  bool resizable = true;
 
   int opt_count = 0;
   int opt_e_index = -1;
@@ -292,6 +297,9 @@ int main (int argc, char * argv[])
         break;
       case 'd':
         set_dimensions(optarg);
+        break;
+      case 'f':
+        resizable = false;
         break;
     }
     if (opt_e_index != -1) break;
@@ -329,7 +337,7 @@ int main (int argc, char * argv[])
 
   SDL_WM_SetCaption(title, NULL);
 
-  screen = SDL_SetVideoMode(FONT_W * term_w, FONT_H * term_h, 32, 0);
+  screen = SDL_SetVideoMode(FONT_W * term_w, FONT_H * term_h, 32, resizable ? SDL_RESIZABLE : 0);
 
   font = SDL_CreateRGBSurfaceFrom(font_raw, FONT_W, FONT_H * FONT_CHAR_COUNT, 8, FONT_W, 0, 0, 0, 0);
 
@@ -425,6 +433,40 @@ int main (int argc, char * argv[])
             send_data(buf);
             // printf("ESC%s\n", buf+1);
             free(buf);
+          }
+        }
+      }
+      else if (event.type == SDL_VIDEORESIZE)
+      {
+        int nw = event.resize.w;
+        int nh = event.resize.h;
+        if (nw >= FONT_W * 2 && nh >= FONT_H * 2)
+        {
+          SDL_Surface * ns = SDL_SetVideoMode(nw, nh, 32, resizable ? SDL_RESIZABLE : 0);
+          if (ns)
+          {
+            tweakx = (nw % FONT_W) / 2;
+            tweaky = (nh % FONT_H) / 2;
+            term_w = nw / FONT_W;
+            term_h = nh / FONT_H;
+
+            SDL_FillRect(ns, NULL, SDL_MapRGB(ns->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
+
+            screen = ns;
+            SDL_Flip(screen);
+
+            if (!tmt_resize(vt, term_h, term_w))
+            {
+              // Bad things can happen in this case. :(
+              exit(1);
+            }
+
+            struct winsize ws = {0};
+            ws.ws_row = term_h;
+            ws.ws_col = term_w;
+            ws.ws_xpixel = term_w * FONT_W;
+            ws.ws_ypixel = term_h * FONT_H;
+            ioctl(master_fd, TIOCSWINSZ, &ws);
           }
         }
       }
@@ -563,9 +605,8 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
     last_bg = bg;
   }
 
-  dstrect.x = FONT_W * x;
-  dstrect.y = FONT_H * y;
-  srcrect.y = FONT_H * (c->c & 0xff);
+  dstrect.x = FONT_W * x + tweakx;
+  dstrect.y = FONT_H * y + tweaky;
   unsigned cc = c->c & 0x1ff;
   if (cc > FONT_CHAR_COUNT) cc = '?';
   srcrect.y = FONT_H * cc;
@@ -586,7 +627,7 @@ static void draw_cursor (const TMTSCREEN * s, const TMTPOINT * p, bool enabled)
   static int oldx = -1, oldy = -1;
   if ((oldx != p->c) || (oldy != p->r))
   {
-    if (oldx != -1)
+    if (oldx != -1 && oldx < s->ncol && oldy < s->nline)
     {
       TMTCHAR * c = &(s->lines[oldy]->chars[oldx]);
       draw_cell(oldx, oldy, c);
@@ -603,8 +644,8 @@ static void draw_cursor (const TMTSCREEN * s, const TMTPOINT * p, bool enabled)
   if (enabled && cursor_enabled)
   {
     SDL_Rect underrect = {0,0,FONT_W,2};
-    underrect.x = p->c * FONT_W;
-    underrect.y = p->r * FONT_H + FONT_H - 2;
+    underrect.x = p->c * FONT_W + tweakx;
+    underrect.y = p->r * FONT_H + FONT_H - 2 + tweaky;
     SDL_FillRect(screen, &underrect, SDL_MapRGB(screen->format, colors[last_fg].r, colors[last_fg].g, colors[last_fg].b));
   }
 }
