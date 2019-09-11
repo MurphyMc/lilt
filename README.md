@@ -72,14 +72,12 @@ it gets fixed, you might try building your own version of SDL using a this
 from DOSBox-X (if you do this, let me know if it works!).
 
 If that sounds like a pain, the other option is to build Antsy using an
-older version of the macOS SDK.  If you use the Rogo build method above,
-it will do this, including offering to download the SDK for you (though
-note that it downloads it *from an unknown third party* which is not
-necessarily the safest thing to do).
+older version of the macOS SDK.  If you use the Rogo build method above
+it will guide you through the necessary steps.
 
 If you'd rather do it by hand but you don't have an old Xcode installed,
 here are the basic steps to do it using the "Command Line Tools for
-Xcode 10.1" which are available form Apple's developer website.
+Xcode 10.1" which are available from Apple's developer website.
 
 You can find the command line tools on Apple's developer website in the
 ["more" downloads area](https://developer.apple.com/download/more/).  You

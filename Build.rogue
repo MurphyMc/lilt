@@ -25,34 +25,48 @@ routine rogo_default
   endIf
 
   if (System.is_macos)
-    if (not File.exists("MacOSX10.13.sdk"))
+    local dmg_filepath = "Command_Line_Tools_macOS_10.13_for_Xcode_10.1.dmg"
+    local volume_filepath = "/Volumes/Command Line Developer Tools"
+    local sdk_filepath = "MacOSX10.13.sdk"
+    if (not File.exists(sdk_filepath) and File.exists(dmg_filepath))
+      println "Extracting Mac OSX 10.13 SDK from Command Line Tools DMG"
+      execute( "hdiutil mount $ > /dev/null" (dmg_filepath) )
+      File.delete( "TempCommandLineTools" )
+      execute(''pkgutil --expand-full "$/Command Line Tools (macOS High Sierra version 10.13).pkg" TempCommandLineTools'' (volume_filepath) )
+      execute(''mv TempCommandLineTools/CLTools_SDK_macOS1014.pkg/Payload/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk $'' (sdk_filepath) )
+      execute( "rm -rf TempCommandLineTools" )
+      execute( ''diskutil unmount "$"'' (volume_filepath) )
+      if ("yes".begins_with(Console.input("Delete $? (yes/no)> "(dmg_filepath)).to_lowercase))
+        File.delete( dmg_filepath )
+      endIf
+    endIf
+    if (not File.exists(sdk_filepath))
       println @|====================================================================================================
                |ATTENTION
                |
                |macOS SDK 10.13 is required to build antsy.
                |
-               |You can obtain a copy yourself and place it in this folder as MacOSX10.13.sdk/ or else type 'yes' to
-               |automatically download a version from https://github.com/phracker. We make no warranties as to the
-               |integrity or safety of this SDK.
+               |The most legitimate way to obtain it is to:
+               |
+               |  1. Go to this Apple software download page:
+               |
+               |     https://developer.apple.com/download/more/
+               |
+               |  2. Search for:
+               |
+               |     Command Line Tools (macOS 10.13) for Xcode 10.1
+               |
+               |  3. Download the DMG ("Command_Line_Tools_macOS_10.13_for_Xcode_10.1.dmg") to this antsy folder.
+               |
+               |  4. Rerun 'rogo' to automatically extract the SDK from the DMG and continue the build.
+               |
+               |Other options:
+               |
+               |  1. You can run 'rogo download sdk' to have Rogo download a copy from GitHub.
+               |
+               |  2. You can obtain a copy yourself and place it in this antsy folder as "MacOSX10.13.sdk".
                |====================================================================================================
-      println "Download macOS 10.13 SDK from the following URL?\n"
-      println "  https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz\n"
-      if ("yes".begins_with(Console.input("(yes/no)> ").to_lowercase))
-        execute @|curl -L "https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz" -o MacOSX10.13.sdk.tar.xz
-
-        local reference_sha = "b28b6489ae9287b4f3575bdd6d5450f33e6ea1d2f706d5579f839a494937e8ab"
-        # This is the sha256 of phracker's MacOSX10.13.sdk.tar.xz as of 2019.09.09. While we neither
-        # trust nor distrust this SDK, we will at least make sure it isn't unexpectedly modified.
-        if (sha256 != reference_sha)
-          throw Error( "ERROR: MacOSX10.13.sdk.tar.gz sha256 has changed - expected $, got $." (reference_sha,sha256) )
-        endIf
-
-        execute @|xz -d MacOSX10.13.sdk.tar.xz
-        execute @|tar -xf MacOSX10.13.sdk.tar
-        File.delete( "MacOSX10.13.sdk.tar" )
-      else
-        throw Error( "Missing MacOSX10.13.sdk/" )
-      endIf
+      throw Error( "ERROR: Missing $/" (sdk_filepath) )
     endIf
   endIf
 
@@ -77,6 +91,31 @@ routine rogo_default
   endIf
 
   execute( "cmake --build ." )
+endRoutine
+
+routine rogo_download_sdk
+  println @|This command downloads macOS 10.13 SDK from the following URL:
+           |
+           |  https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
+           |
+           |We make no warranties as to the integrity or safety of this SDK; it is untrusted but not DIStrusted.
+           |
+  if ("yes".begins_with(Console.input("Download the the macOS 10.13 SDK from github.com/phracker (yes/no)? ").to_lowercase))
+    execute @|curl -L "https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz" -o MacOSX10.13.sdk.tar.xz
+
+    local reference_sha = "b28b6489ae9287b4f3575bdd6d5450f33e6ea1d2f706d5579f839a494937e8ab"
+    # This is the sha256 of phracker's MacOSX10.13.sdk.tar.xz as of 2019.09.09. While we neither
+    # trust nor distrust this SDK, we will at least make sure it isn't unexpectedly modified.
+    if (sha256 != reference_sha)
+      throw Error( "ERROR: MacOSX10.13.sdk.tar.gz sha256 has changed - expected $, got $." (reference_sha,sha256) )
+    endIf
+
+    execute @|xz -d MacOSX10.13.sdk.tar.xz
+    execute @|tar -xf MacOSX10.13.sdk.tar
+    File.delete( "MacOSX10.13.sdk.tar" )
+
+    println "\nNow run 'rogo' to build antsy!"
+  endIf
 endRoutine
 
 routine sha256->String

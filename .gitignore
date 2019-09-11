@@ -1,10 +1,11 @@
+*.dmg
+*.swo
+*.swp
 .rogo
 CMakeCache.txt
 CMakeFiles
+MacOSX10.13.sdk
 Makefile
 antsy
 cmake_install.cmake
 libtmt
-*.swp
-*.swo
-MacOSX10.13.sdk
