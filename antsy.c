@@ -272,6 +272,7 @@ static bool set_dimensions (const char * d)
 static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
 {
   static int last_sdlbutton = -1; // Invalid
+  static int last_motion_x = -1, last_motion_y = -1;
   if (event == SDL_MOUSEMOTION)
   {
     if (last_sdlbutton == -1) return;
@@ -281,10 +282,14 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
   else if (event == SDL_MOUSEBUTTONDOWN)
   {
     if (last_sdlbutton == -1) last_sdlbutton = sdlbutton;
+    last_motion_x = -1;
+    last_motion_y = -1;
   }
   else
   {
     last_sdlbutton = -1;
+    last_motion_x = -1;
+    last_motion_y = -1;
   }
 
   int button = 0;
@@ -302,6 +307,13 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
   if (x > term_w) x = term_w;
   if (y < 0) y = 0;
   if (y > term_h) x = term_h;
+
+  if (event == SDL_MOUSEMOTION)
+  {
+    if (x == last_motion_x && y == last_motion_y) return;
+    last_motion_x = x;
+    last_motion_y = y;
+  }
 
   char * buf = NULL;
 
