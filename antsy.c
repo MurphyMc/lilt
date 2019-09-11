@@ -204,6 +204,7 @@ static bool init_master (char * argv0, char * cshell, char ** run_cmd)
 void init_slave (char * arg, char * argv[])
 {
   setenv("TERM", "ansi", 1);
+  setenv("LANG", "", 1);
 
   char buf[10];
   sprintf(buf, "%i", term_h);
@@ -223,7 +224,6 @@ void init_slave (char * arg, char * argv[])
   setsid();
 
   ioctl(slave_fd, TIOCSCTTY, 1);
-
 
   struct winsize ws = {0};
   ws.ws_row = term_h;
