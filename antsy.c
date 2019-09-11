@@ -40,10 +40,7 @@ SDL_Surface * font;
 
 TMT * vt = 0;
 
-// It'd be nice if we could disable mouse by default, but we don't seem
-// to get the mode from vim.  Probably because the ansi termcap doesn't
-// know anything about it?
-static int mouse_mode = 9; // -1 to disable
+static int mouse_mode = -1; // -1 to disable, 9 (X10), 1006
 static bool mouse_motion = false;
 
 static bool cursor_enabled = true;
@@ -353,7 +350,7 @@ int main (int argc, char * argv[])
   int opt_e_index = -1;
   char * title = DEFAULT_TITLE;
   int opt;
-  while ((opt = getopt(argc, argv, "+s:et:d:b:")) != -1)
+  while ((opt = getopt(argc, argv, "+s:et:d:b:mM")) != -1)
   {
     opt_count++;
     switch (opt)
@@ -376,6 +373,12 @@ int main (int argc, char * argv[])
         break;
       case 'f':
         resizable = false;
+        break;
+      case 'm':
+        mouse_mode = 9;
+        break;
+      case 'M':
+        mouse_mode = 1006;
         break;
     }
     if (opt_e_index != -1) break;
