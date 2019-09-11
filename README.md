@@ -101,6 +101,8 @@ as usual!
 * `-e CMD ARGS...` - Run command instead of a shell (use as last argument)
 * `-b MSEC` - Blink cursor every MSEC milliseconds
 * `-d WxH` - Set window width and height (in characters)
+* `-m` - Start with X10 mouse mode enabled
+* `-M` - Start with 1006 mouse mode enabled
 
 ## Fonts
 
