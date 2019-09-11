@@ -16,7 +16,7 @@
 #define DEF_BG 0
 
 int term_w = 80;
-int term_h = 25; // vt52 was 24, but DOS machines usually 25
+int term_h = 25; // vt52 was 24, but DOS machines were usually 25
 
 // Drawing position tweaks
 int tweakx = 0;
@@ -144,7 +144,8 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
         key = TMT_KEY_BACK_TAB;
       }
       break;
-    default:
+
+    default: // Silence warnings
       break;
   }
   char ch[2] = {0};
@@ -208,6 +209,7 @@ static bool init_master (char * argv0, char * cshell, char ** run_cmd)
 
   return true;
 }
+
 
 void init_slave (char * arg, char * argv[])
 {
@@ -738,7 +740,8 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
       break;
     }
 #endif
-    default:
+
+    default: // Silence warnings
       break;
   }
 }
