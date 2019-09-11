@@ -268,6 +268,36 @@ static bool set_dimensions (const char * d)
 }
 
 
+static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
+{
+  int button = 0;
+  switch (sdlbutton)
+  {
+    case SDL_BUTTON_RIGHT: button = 1; break;
+    case SDL_BUTTON_MIDDLE: button = 2; break;
+    case SDL_BUTTON_WHEELDOWN: button = 65; break;
+    case SDL_BUTTON_WHEELUP: button = 66; break;
+  }
+
+  int x = (scrx) / FONT_W;
+  int y = (scry) / FONT_H;
+  char * buf;
+
+  // See ctlseqs in xterm manual
+
+  //if (asprintf(&buf, "\x1b[%i;%i;%i%c", button, x, y,
+  //    (event.type == SDL_MOUSEBUTTONDOWN) ? 'M' : 'm') > 0)
+
+  // X10-style mouse
+  if (asprintf(&buf, "\x1b[M%c%c%c", button+32, x+1+32, y+1+32) > 0)
+  {
+    send_data(buf);
+    // printf("ESC%s\n", buf+1);
+    free(buf);
+  }
+}
+
+
 int main (int argc, char * argv[])
 {
   int cursor_blink_delay = 0; // 0 is disable
@@ -409,31 +439,7 @@ int main (int argc, char * argv[])
       {
         if (mouse_enabled && mouse_active)
         {
-          int button = 0;
-          switch (event.button.button)
-          {
-            case SDL_BUTTON_RIGHT: button = 1; break;
-            case SDL_BUTTON_MIDDLE: button = 2; break;
-            case SDL_BUTTON_WHEELDOWN: button = 65; break;
-            case SDL_BUTTON_WHEELUP: button = 66; break;
-          }
-
-          int x = event.button.x / FONT_W;
-          int y = event.button.y / FONT_H;
-          char * buf;
-
-          // See ctlseqs in xterm manual
-
-          //if (asprintf(&buf, "\x1b[%i;%i;%i%c", button, x, y,
-          //    (event.type == SDL_MOUSEBUTTONDOWN) ? 'M' : 'm') > 0)
-
-          // X10-style mouse
-          if (asprintf(&buf, "\x1b[M%c%c%c", button+32, x+1+32, y+1+32) > 0)
-          {
-            send_data(buf);
-            // printf("ESC%s\n", buf+1);
-            free(buf);
-          }
+          handle_mouse(event.button.button, event.button.x, event.button.y, event.type);
         }
       }
       else if (event.type == SDL_VIDEORESIZE)
