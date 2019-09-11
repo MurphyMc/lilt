@@ -331,9 +331,15 @@ int main (int argc, char * argv[])
 
   screen = SDL_SetVideoMode(FONT_W * term_w, FONT_H * term_h, 32, 0);
 
-  font = SDL_CreateRGBSurfaceFrom(font_raw, FONT_W, FONT_H * 256, 8, FONT_W, 0, 0, 0, 0);
+  font = SDL_CreateRGBSurfaceFrom(font_raw, FONT_W, FONT_H * FONT_CHAR_COUNT, 8, FONT_W, 0, 0, 0, 0);
 
-  vt = tmt_open(term_h, term_w, terminal_callback, NULL, NULL);
+#ifdef FONT_ACS_CHARS
+  const wchar_t * acs = acs_chars;
+#else
+  const wchar_t * acs = NULL;
+#endif
+
+  vt = tmt_open(term_h, term_w, terminal_callback, NULL, acs);
 
   if (!screen || !font || !vt) return 1;
 
@@ -560,6 +566,9 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
   dstrect.x = FONT_W * x;
   dstrect.y = FONT_H * y;
   srcrect.y = FONT_H * (c->c & 0xff);
+  unsigned cc = c->c & 0x1ff;
+  if (cc > FONT_CHAR_COUNT) cc = '?';
+  srcrect.y = FONT_H * cc;
 
   SDL_BlitSurface(font, &srcrect, screen, &dstrect);
 
