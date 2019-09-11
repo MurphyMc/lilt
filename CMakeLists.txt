@@ -23,6 +23,11 @@ if (ANTSY_TITLE_SET)
   add_definitions(-DANTSY_TITLE_SET)
 endif ()
 
+set(TMT_MODE_MSGS "true" CACHE BOOL "libtmt has TMT_MSG_(UN)SETMODE")
+if (TMT_MODE_MSGS)
+  add_definitions(-DTMT_MODE_MSGS)
+endif ()
+
 if (DEFINED MAC_SDK_ROOT)
   set(CMAKE_C_FLAGS "--sysroot ${MAC_SDK_ROOT} ${CMAKE_C_FLAGS}")
 endif ()

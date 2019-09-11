@@ -41,9 +41,11 @@ SDL_Surface * font;
 TMT * vt = 0;
 
 // It'd be nice if we could disable mouse by default, but we don't seem
-// to get the mode enabled.  Probably because the ansi termcap doesn't
+// to get the mode from vim.  Probably because the ansi termcap doesn't
 // know anything about it?
-static bool mouse_enabled = true;
+static int mouse_mode = 9; // -1 to disable
+static bool mouse_motion = false;
+
 static bool cursor_enabled = true;
 
 int master_fd = -1;
@@ -272,6 +274,22 @@ static bool set_dimensions (const char * d)
 
 static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
 {
+  static int last_sdlbutton = -1; // Invalid
+  if (event == SDL_MOUSEMOTION)
+  {
+    if (last_sdlbutton == -1) return;
+    if (!SDL_BUTTON(sdlbutton)) return; // Weird
+    sdlbutton = last_sdlbutton;
+  }
+  else if (event == SDL_MOUSEBUTTONDOWN)
+  {
+    if (last_sdlbutton == -1) last_sdlbutton = sdlbutton;
+  }
+  else
+  {
+    last_sdlbutton = -1;
+  }
+
   int button = 0;
   switch (sdlbutton)
   {
@@ -288,20 +306,41 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
   if (y < 0) y = 0;
   if (y > term_h) x = term_h;
 
-  char * buf;
+  char * buf = NULL;
 
   // See ctlseqs in xterm manual
 
-  //if (asprintf(&buf, "\x1b[%i;%i;%i%c", button, x, y,
-  //    (event.type == SDL_MOUSEBUTTONDOWN) ? 'M' : 'm') > 0)
-
-  // X10-style mouse
-  if (asprintf(&buf, "\x1b[M%c%c%c", button+32, x+1+32, y+1+32) > 0)
+  if (mouse_mode == 9)
   {
-    send_data(buf);
-    // printf("ESC%s\n", buf+1);
-    free(buf);
+    if (event == SDL_MOUSEBUTTONDOWN || (event == SDL_MOUSEMOTION && mouse_motion))
+    {
+      if (mouse_motion) button += 32;
+      if (asprintf(&buf, "\x1b[M%c%c%c", button+32, x+1+32, y+1+32) == -1) buf = NULL;
+    }
   }
+  else if (mouse_mode == 1006)
+  {
+    switch (event)
+    {
+      case SDL_MOUSEMOTION:
+      {
+        if (mouse_motion) button += 32;
+        else break;
+      }
+      case SDL_MOUSEBUTTONDOWN:
+      case SDL_MOUSEBUTTONUP:
+      {
+        char c = (event != SDL_MOUSEBUTTONUP) ? 'M' : 'm';
+        if (asprintf(&buf, "\x1b[<%i;%i;%i%c", button, x+1, y+1, c) == -1) buf = NULL;
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  if (buf) send_data(buf);
+  free(buf);
 }
 
 
@@ -442,9 +481,16 @@ int main (int argc, char * argv[])
           mouse_active_at = SDL_GetTicks() + mouse_active_delay;
         }
       }
-      else if (event.type == SDL_MOUSEBUTTONDOWN)
+      else if (event.type == SDL_MOUSEMOTION)
       {
-        if (mouse_enabled && mouse_active)
+        if (mouse_active)
+        {
+          handle_mouse(event.motion.state, event.motion.x, event.motion.y, event.type);
+        }
+      }
+      else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
+      {
+        if (mouse_active)
         {
           handle_mouse(event.button.button, event.button.x, event.button.y, event.type);
         }
@@ -733,10 +779,16 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
     }
 #endif
 
-#if 0
-    case TMT_MSG_X10MOUSE:
+#ifdef TMT_MODE_MSGS
+    case TMT_MSG_SETMODE:
+    case TMT_MSG_UNSETMODE:
     {
-      mouse_enabled = *(char*)a == 't';
+      bool set = m == TMT_MSG_SETMODE;
+      size_t mode = *(size_t*)a;
+      if (mode == 1002) mouse_motion = set;
+      else if (mode == 9) mouse_mode = set ? mode : -1;
+      else if (mode == 1006) mouse_mode = set ? mode : -1;
+      //else printf("%sSETMODE %zu\n", set?"":"UN", mode);
       break;
     }
 #endif
