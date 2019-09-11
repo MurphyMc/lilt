@@ -279,8 +279,13 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
     case SDL_BUTTON_WHEELUP: button = 66; break;
   }
 
-  int x = (scrx) / FONT_W;
-  int y = (scry) / FONT_H;
+  int x = (scrx - tweakx) / FONT_W;
+  int y = (scry - tweaky) / FONT_H;
+  if (x < 0) x = 0;
+  if (x > term_w) x = term_w;
+  if (y < 0) y = 0;
+  if (y > term_h) x = term_h;
+
   char * buf;
 
   // See ctlseqs in xterm manual
