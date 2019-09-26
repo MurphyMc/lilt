@@ -446,7 +446,7 @@ int main (int argc, char * argv[])
 
   SDL_SetColors(font, pal, 0, 2);
   SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
-  SDL_Flip(screen);
+  SDL_UpdateRect(screen, 0, 0, 0, 0);
 
   tmt_write(vt, "", 0);
   //tmt_write(vt, "\x1b[35mHello,\x1b[0m world!", 0);
@@ -527,13 +527,14 @@ int main (int argc, char * argv[])
             SDL_FillRect(ns, NULL, SDL_MapRGB(ns->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
 
             screen = ns;
-            SDL_Flip(screen);
 
             if (!tmt_resize(vt, term_h, term_w))
             {
               // Bad things can happen in this case. :(
               exit(1);
             }
+
+            SDL_UpdateRect(screen, 0, 0, 0, 0);
 
             struct winsize ws = {0};
             ws.ws_row = term_h;
@@ -560,7 +561,6 @@ int main (int argc, char * argv[])
       const TMTSCREEN * s = tmt_screen(vt);
       const TMTPOINT * c = tmt_cursor(vt);
       draw_cursor(s, c, cursor_blink);
-      SDL_Flip(screen);
       //printf(cursor_blink?"blink\n":"BLINK\n");
     }
 
@@ -695,6 +695,10 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
   }
 }
 
+static void update_cells (int x, int y, int w, int h)
+{
+  SDL_UpdateRect(screen, x*FONT_W+tweakx, y*FONT_H+tweaky, FONT_W*w, FONT_H*h);
+}
 
 static void draw_cursor (const TMTSCREEN * s, const TMTPOINT * p, bool enabled)
 {
@@ -705,6 +709,7 @@ static void draw_cursor (const TMTSCREEN * s, const TMTPOINT * p, bool enabled)
     {
       TMTCHAR * c = &(s->lines[oldy]->chars[oldx]);
       draw_cell(oldx, oldy, c);
+      update_cells(oldx, oldy, 1, 1);
     }
     oldx = p->c;
     oldy = p->r;
@@ -722,6 +727,7 @@ static void draw_cursor (const TMTSCREEN * s, const TMTPOINT * p, bool enabled)
     underrect.y = p->r * FONT_H + FONT_H - 2 + tweaky;
     SDL_FillRect(screen, &underrect, SDL_MapRGB(screen->format, colors[last_fg].r, colors[last_fg].g, colors[last_fg].b));
   }
+  update_cells(p->c, p->r, 1, 1);
 }
 
 
@@ -750,6 +756,7 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
           TMTCHAR * ch = &(s->lines[y]->chars[x]);
           draw_cell(x, y, ch);
         }
+        update_cells(0, y, s->ncol, 1);
       }
 
       if (do_cursor)
@@ -760,7 +767,6 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
       }
 
       tmt_clean(vt);
-      SDL_Flip(screen);
       break;
     }
 
@@ -773,7 +779,6 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
     case TMT_MSG_MOVED:
     {
       draw_cursor(s, (TMTPOINT*)a, true);
-      SDL_Flip(screen);
       break;
     }
 
