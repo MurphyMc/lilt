@@ -510,6 +510,32 @@ int main (int argc, char * argv[])
           handle_mouse(event.button.button, event.button.x, event.button.y, event.type);
         }
       }
+      else if (event.type == SDL_VIDEOEXPOSE)
+      {
+        SDL_Rect r = {0,0,screen->w,tweaky};
+        Uint32 color = SDL_MapRGB(screen->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b);
+        SDL_FillRect(screen, &r, color);
+        r.y = tweaky + term_h*FONT_H;
+        r.h = screen->h - r.y;
+        SDL_FillRect(screen, &r, color);
+        r.x = 0;
+        r.y = 0;
+        r.w = tweakx;
+        r.h = screen->h;
+        SDL_FillRect(screen, &r, color);
+        r.x = tweakx + term_w*FONT_W;
+        r.w = screen->w - r.x;
+        SDL_FillRect(screen, &r, color);
+
+        // Do a "resize" (to the same size) to convince libtmt to repaint everything
+        if (!tmt_resize(vt, term_h, term_w))
+        {
+          // Bad things can happen in this case. :(
+          exit(1);
+        }
+
+        SDL_UpdateRect(screen, 0, 0, 0, 0);
+      }
       else if (event.type == SDL_VIDEORESIZE)
       {
         int nw = event.resize.w;
