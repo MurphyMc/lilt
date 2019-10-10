@@ -32,13 +32,13 @@ if (DEFINED MAC_SDK_ROOT)
   set(CMAKE_C_FLAGS "--sysroot ${MAC_SDK_ROOT} ${CMAKE_C_FLAGS}")
 endif ()
 
-project (antsy)
-add_executable(antsy
-  antsy.c
+project (lilt)
+add_executable(lilt
+  lilt.c
   libtmt/tmt.c
 )
 
 find_package(SDL REQUIRED)
 include_directories(${SDL_INCLUDE_DIR})
 
-target_link_libraries(antsy ${SDL_LIBRARY})
+target_link_libraries(lilt ${SDL_LIBRARY})

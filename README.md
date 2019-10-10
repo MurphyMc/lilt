@@ -30,7 +30,7 @@ Lilt can be compiled either using the Rogo build system or using CMake.
 These two options are detailed in the following subsections.
 
 For simple scenarios, it can also be pretty trivially compiled entirely
-by hand -- just compile `antsy.c` and `libtmt/tmt.c` and link them with
+by hand -- just compile `lilt.c` and `libtmt/tmt.c` and link them with
 libSDL.)
 
 If you're building on macOS, please see the subsection below.

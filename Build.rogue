@@ -137,7 +137,7 @@ routine rogo_clean
   File.delete( "Makefile" )
   File.delete( "cmake_install.cmake" )
 
-  File.delete( "antsy" )
+  File.delete( "lilt" )
 endRoutine
 
 routine execute( commands:String, &suppress_error )->Logical
