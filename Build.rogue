@@ -44,7 +44,7 @@ routine rogo_default
       println @|====================================================================================================
                |ATTENTION
                |
-               |macOS SDK 10.13 is required to build antsy.
+               |macOS SDK 10.13 is required to build Lilt.
                |
                |The most legitimate way to obtain it is to:
                |
@@ -56,7 +56,7 @@ routine rogo_default
                |
                |     Command Line Tools (macOS 10.13) for Xcode 10.1
                |
-               |  3. Download the DMG ("Command_Line_Tools_macOS_10.13_for_Xcode_10.1.dmg") to this antsy folder.
+               |  3. Download the DMG ("Command_Line_Tools_macOS_10.13_for_Xcode_10.1.dmg") to this lilt folder.
                |
                |  4. Rerun 'rogo' to automatically extract the SDK from the DMG and continue the build.
                |
@@ -64,7 +64,7 @@ routine rogo_default
                |
                |  1. You can run 'rogo download sdk' to have Rogo download a copy from GitHub.
                |
-               |  2. You can obtain a copy yourself and place it in this antsy folder as "MacOSX10.13.sdk".
+               |  2. You can obtain a copy yourself and place it in this lilt folder as "MacOSX10.13.sdk".
                |====================================================================================================
       throw Error( "ERROR: Missing $/" (sdk_filepath) )
     endIf
@@ -114,7 +114,7 @@ routine rogo_download_sdk
     execute @|tar -xf MacOSX10.13.sdk.tar
     File.delete( "MacOSX10.13.sdk.tar" )
 
-    println "\nNow run 'rogo' to build antsy!"
+    println "\nNow run 'rogo' to build Lilt!"
   endIf
 endRoutine
 

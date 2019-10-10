@@ -1,14 +1,14 @@
-# Antsy Term
+# Lilt: The Lil Terminal
 
-Antsy is a graphical terminal emulator that emulates an ANSI terminal with
+Lilt is a graphical terminal emulator that emulates an ANSI terminal with
 a couple of extensions (notably, xterm-style window title setting and mouse
-clicking work).
+clicking work).  Lilt was formerly (and briefly) known as Antsy Terminal.
 
 It utilizes Rob King's Tiny Mock Terminal Library (libtmt) -- or my fork of
 it -- to do the actual terminal escape sequence parsing, and it uses SDL1
 to do the rendering, input, etc.
 
-![Antsy screenshot](screenshot.png)
+![Lilt screenshot](screenshot.png)
 
 ## Features
 
@@ -21,12 +21,12 @@ to do the rendering, input, etc.
 * Good for constrained systems (uses vfork() for systems with no MMU, uses
   only a single thread)
 
-Antsy should be fairly portable.  It currently has been tested with Linux
+Lilt should be fairly portable.  It currently has been tested with Linux
 and macOS (see the "Building for macOS" section for more on the latter).
 
 ## Building
 
-Antsy can be compiled either using the Rogo build system or using CMake.
+Lilt can be compiled either using the Rogo build system or using CMake.
 These two options are detailed in the following subsections.
 
 For simple scenarios, it can also be pretty trivially compiled entirely
@@ -37,12 +37,12 @@ If you're building on macOS, please see the subsection below.
 
 ### Rogo
 
-To compile Antsy using the Rogo build system, install Rogue 1.5.1 or better
+To compile Lilt using the Rogo build system, install Rogue 1.5.1 or better
 from here:
 
 [https://github.com/AbePralle/Rogue](https://github.com/AbePralle/Rogue)
 
-Then execute the following to build Antsy on Ubuntu or macOS:
+Then execute the following to build Lilt on Ubuntu or macOS:
 
     rogo
 
@@ -63,15 +63,15 @@ You should then be able to build with `cmake --build .`.
 
 ### Building for macOS
 
-With macOS, building Antsy probably takes a bit of effort if you're
+With macOS, building Lilt probably takes a bit of effort if you're
 using Mojave (and probably future versions).  A change in Mojave results
 in SDL-based applications having blank windows (this problem isn't unique
-to Antsy and affects other things including stuff like PyGame).  Until
+to Lilt and affects other things including stuff like PyGame).  Until
 it gets fixed, you might try building your own version of SDL using a this
 [patch](https://github.com/joncampbell123/dosbox-x/commit/fdf6061c)
 from DOSBox-X (if you do this, let me know if it works!).
 
-If that sounds like a pain, the other option is to build Antsy using an
+If that sounds like a pain, the other option is to build Lilt using an
 older version of the macOS SDK.  If you use the Rogo build method above
 it will guide you through the necessary steps.
 
@@ -82,7 +82,7 @@ Xcode 10.1" which are available from Apple's developer website.
 You can find the command line tools on Apple's developer website in the
 ["more" downloads area](https://developer.apple.com/download/more/).  You
 want "Command Line Tools (macOS 10.13) for Xcode 10.1".  Mount the `.dmg`
-file.  Then in a terminal in the Antsy directory, you should be able to do
+file.  Then in a terminal in the Lilt directory, you should be able to do
 something like:
 ```
 pkgutil --expand-full /Volumes/Command*Tools/*10.13*.pkg CLT10_1

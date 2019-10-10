@@ -10,7 +10,7 @@
 
 #include "libtmt/tmt.h"
 
-#define DEFAULT_TITLE "Antsy"
+#define DEFAULT_TITLE "Lilt"
 
 #define DEF_FG 15
 #define DEF_BG 0
