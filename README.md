@@ -16,7 +16,7 @@ to do the rendering, input, etc.
 * Nice default font and color scheme
 * All resources get compiled into the binary
 * Good enough emulation for vim and tmux
-* X10-style mouse support (works in vim)
+* X10/1002/1006 mouse support (works in vim and tmux)
 * Simple dependencies (just SDL and the libtmt repository)
 * Good for constrained systems (uses vfork() for systems with no MMU, uses
   only a single thread)
@@ -53,7 +53,8 @@ You need SDL 1.2.  On Ubuntu, `apt install libsdl1.2-dev` should do it.
 You need cmake.  On Ubuntu, `apt install cmake` should do it.
 
 You need libtmt.  `git clone https://github.com/MurphyMc/libtmt` should
-do it.
+do it.  (This gets Murphy's fork, which is required for full
+full functionality.)
 
 Configure the project using `cmake .` or `ccmake .`  The stock libtmt
 (if you're using it instead of Murphy's fork) will require you to set
