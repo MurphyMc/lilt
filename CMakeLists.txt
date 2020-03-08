@@ -18,9 +18,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-set(ANTSY_TITLE_SET "true" CACHE BOOL "Allow xterm window title setting")
-if (ANTSY_TITLE_SET)
-  add_definitions(-DANTSY_TITLE_SET)
+set(LILT_TITLE_SET "true" CACHE BOOL "Allow xterm window title setting")
+if (LILT_TITLE_SET)
+  add_definitions(-DLILT_TITLE_SET)
 endif ()
 
 set(TMT_MODE_MSGS "true" CACHE BOOL "libtmt has TMT_MSG_(UN)SETMODE")
