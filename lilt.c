@@ -814,7 +814,7 @@ void terminal_callback (tmt_msg_t m, TMT *vt, const void *a, void *p)
       break;
     }
 
-#ifdef ANTSY_TITLE_SET
+#ifdef LILT_TITLE_SET
     case TMT_MSG_TITLE:
     {
       char * title = (char*)a;
