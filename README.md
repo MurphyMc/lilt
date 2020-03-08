@@ -58,7 +58,7 @@ full functionality.)
 
 Configure the project using `cmake .` or `ccmake .`  The stock libtmt
 (if you're using it instead of Murphy's fork) will require you to set
-the `ANTSY_TITLE_SET` option to False.
+the `LILT_TITLE_SET` option to False.
 
 You should then be able to build with `cmake --build .`.
 
