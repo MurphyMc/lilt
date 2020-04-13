@@ -31,7 +31,7 @@ These two options are detailed in the following subsections.
 
 For simple scenarios, it can also be pretty trivially compiled entirely
 by hand -- just compile `lilt.c` and `libtmt/tmt.c` and link them with
-libSDL.)
+libSDL.
 
 If you're building on macOS, please see the subsection below.
 
@@ -68,7 +68,7 @@ With macOS, building Lilt probably takes a bit of effort if you're
 using Mojave (and probably future versions).  A change in Mojave results
 in SDL-based applications having blank windows (this problem isn't unique
 to Lilt and affects other things including stuff like PyGame).  Until
-it gets fixed, you might try building your own version of SDL using a this
+it gets fixed, you might try building your own version of SDL using a
 [patch](https://github.com/joncampbell123/dosbox-x/commit/fdf6061c)
 from DOSBox-X (if you do this, let me know if it works!).
 
