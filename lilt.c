@@ -63,8 +63,10 @@ static void send_data (const char * key)
 
 static void handle_sdl_keypress (SDL_KeyboardEvent * event)
 {
+  bool ctrl = (event->keysym.mod & (KMOD_LCTRL|KMOD_RCTRL));
   bool shift = (event->keysym.mod & (KMOD_LSHIFT|KMOD_RSHIFT));
   char * key = NULL;
+  char ch[2] = {0};
   switch (event->keysym.sym)
   {
     case SDLK_UP:
@@ -152,10 +154,19 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
         key = TMT_KEY_BACK_TAB;
       break;
 
-    default: // Silence warnings
+    default:
+      if (event->keysym.unicode == 0 && ctrl)
+      {
+        // With SDL2 and 1.2-compat, we get here for ctrl chars.
+        int cc = event->keysym.sym;
+        if (cc >= 'a' && cc <= 'z')
+        {
+          ch[0] = (char)(cc-'a'+1);
+          key = ch;
+        }
+      }
       break;
   }
-  char ch[2] = {0};
   if (key == NULL)
   {
     if ((event->keysym.unicode & 0xFF80) == 0)
