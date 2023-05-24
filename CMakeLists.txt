@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.9)
 
 # Here's a cute snippet from Marcus D. Hanwell at
 # https://blog.kitware.com/cmake-and-the-default-build-type/
