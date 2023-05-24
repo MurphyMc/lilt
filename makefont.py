@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 
 filename = sys.argv[1]
@@ -18,8 +18,8 @@ size = d[1].split()
 iw = int(size[0])
 ih = int(size[1])
 
-chars_wide = iw / cellw
-chars_high = ih / cellh
+chars_wide = iw // cellw
+chars_high = ih // cellh
 
 if (iw % cellw) - left >= chw: chars_wide += 1
 
@@ -31,19 +31,19 @@ COL2 = "1"#0xffffffff"
 SEP = ","
 
 import string
-is_printable = lambda s: set(s).issubset(string.digits+string.letters+string.punctuation)
+is_printable = lambda s: set(s).issubset(string.digits+string.ascii_letters+string.punctuation)
 
-print "//", " ".join(sys.argv)
-print "#define FONT_W", chw
-print "#define FONT_H", chh
-print
+print( "//", " ".join(sys.argv) )
+print( "#define FONT_W", chw )
+print( "#define FONT_H", chh )
+print()
 
-print "uint8_t font_raw[] = {"
+print("uint8_t font_raw[] = {")
 assert len(d) == (iw*ih)
 c = 0
 for y in range(chars_high):
   for x in range(chars_wide):
-    print "/* Char %3s 0x%02x %s */" % (c,c,chr(c) if is_printable(chr(c)) else "_")
+    print("/* Char %3s 0x%02x %s */" % (c,c,chr(c) if is_printable(chr(c)) else "_"))
     c += 1
     for yy in range(top,top+chh):
       l = []
@@ -51,6 +51,6 @@ for y in range(chars_high):
         p = (y*cellh+yy) * iw + x * cellw + xx
         assert d[p] in ("0","1")
         l.append(COL1 if d[p]=="0" else COL2)
-      print SEP.join(l)+SEP
-    print
-print "};"
+      print(SEP.join(l)+SEP)
+    print()
+print("};")
