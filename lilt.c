@@ -23,7 +23,12 @@ int term_h = 25; // vt52 was 24, but DOS machines were usually 25
 int tweakx = 0;
 int tweaky = 0;
 
+#if LILT_FONT_TINY
+#include "font4x8.h"
+#else
 #include "font.h"
+#endif
+
 #include "palette.h"
 
 // Actual colors to use

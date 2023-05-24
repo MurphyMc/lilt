@@ -18,6 +18,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+set(LILT_FONT_TINY "false" CACHE BOOL "Use tiny 4x8 font")
+if (LILT_FONT_TINY)
+  add_definitions(-DLILT_FONT_TINY)
+endif ()
+
 set(LILT_TITLE_SET "true" CACHE BOOL "Allow xterm window title setting")
 if (LILT_TITLE_SET)
   add_definitions(-DLILT_TITLE_SET)
