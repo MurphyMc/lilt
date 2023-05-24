@@ -316,8 +316,8 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
   {
     case SDL_BUTTON_RIGHT: button = 1; break;
     case SDL_BUTTON_MIDDLE: button = 2; break;
-    case SDL_BUTTON_WHEELDOWN: button = 65; break;
-    case SDL_BUTTON_WHEELUP: button = 66; break;
+    case SDL_BUTTON_WHEELDOWN: button = 64; break;
+    case SDL_BUTTON_WHEELUP: button = 65; break;
   }
 
   int x = (scrx - tweakx) / FONT_W;
