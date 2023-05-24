@@ -65,3 +65,8 @@ uint32_t palette_raw[] = {
 0x8abeb7,
 0xc5c8c6,
 };
+
+uint32_t * bgpalette_raw = palette_raw;
+
+// You could also define eight separate colors for the background...
+//uint32_t bgpalette_raw[] = {...};

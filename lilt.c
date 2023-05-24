@@ -33,6 +33,9 @@ int tweaky = 0;
 
 // Actual colors to use
 SDL_Color colors [16];
+SDL_Color bgcolors [8];
+
+static int bg_intensity = 90; // Percentage
 
 // Current colors
 SDL_Color pal [2] = {0}; // 0 is background, 1 is current foreground
@@ -389,7 +392,7 @@ int main (int argc, char * argv[])
   int opt_e_index = -1;
   char * title = DEFAULT_TITLE;
   int opt;
-  while ((opt = getopt(argc, argv, "+s:et:d:b:mM")) != -1)
+  while ((opt = getopt(argc, argv, "+s:et:d:b:mMB:")) != -1)
   {
     opt_max = optind;
     switch (opt)
@@ -419,6 +422,9 @@ int main (int argc, char * argv[])
       case 'M':
         mouse_mode = 1006;
         break;
+      case 'B':
+        bg_intensity = atoi(optarg);
+        break;
     }
     if (opt_e_index != -1) break;
   }
@@ -445,8 +451,19 @@ int main (int argc, char * argv[])
     colors[i].unused = 0;
   }
 
-  pal[0] = colors[DEF_FG];
-  pal[1] = colors[DEF_BG];
+  // Background colors are darkened
+  #define UCLAMP(x) ((x<=255)?(x):255)
+  #define DARKEN(c) UCLAMP(bg_intensity*((c)&0xff)/100)
+  for (int i = 0; i < 8; i++)
+  {
+    bgcolors[i].b = DARKEN(bgpalette_raw[i] >>  0) & 0xff;
+    bgcolors[i].g = DARKEN(bgpalette_raw[i] >>  8) & 0xff;
+    bgcolors[i].r = DARKEN(bgpalette_raw[i] >> 16) & 0xff;
+    bgcolors[i].unused = 0;
+  }
+
+  pal[0] = bgcolors[DEF_BG];
+  pal[1] = colors[DEF_FG];
 
   SDL_Init(SDL_INIT_VIDEO);
 
@@ -475,7 +492,7 @@ int main (int argc, char * argv[])
   if (!init_master(argv[0], cshell, run_cmd)) return 2;
 
   SDL_SetColors(font, pal, 0, 2);
-  SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
+  SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, bgcolors[DEF_BG].r, bgcolors[DEF_BG].g, bgcolors[DEF_BG].b));
   SDL_UpdateRect(screen, 0, 0, 0, 0);
 
   tmt_write(vt, "", 0);
@@ -543,7 +560,7 @@ int main (int argc, char * argv[])
       else if (event.type == SDL_VIDEOEXPOSE)
       {
         SDL_Rect r = {0,0,screen->w,tweaky};
-        Uint32 color = SDL_MapRGB(screen->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b);
+        Uint32 color = SDL_MapRGB(screen->format, bgcolors[DEF_BG].r, bgcolors[DEF_BG].g, bgcolors[DEF_BG].b);
         SDL_FillRect(screen, &r, color);
         r.y = tweaky + term_h*FONT_H;
         r.h = screen->h - r.y;
@@ -580,7 +597,7 @@ int main (int argc, char * argv[])
             term_w = nw / FONT_W;
             term_h = nh / FONT_H;
 
-            SDL_FillRect(ns, NULL, SDL_MapRGB(ns->format, colors[DEF_BG].r, colors[DEF_BG].g, colors[DEF_BG].b));
+            SDL_FillRect(ns, NULL, SDL_MapRGB(ns->format, bgcolors[DEF_BG].r, bgcolors[DEF_BG].g, bgcolors[DEF_BG].b));
 
             screen = ns;
 
@@ -727,7 +744,7 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
 
   if (fg != last_fg || bg != last_bg)
   {
-    pal[0] = colors[bg];
+    pal[0] = bgcolors[bg];
     pal[1] = colors[fg];
     //printf("fg:%i bg:%i pos:%lu,%lu\n", fg, bg, x, y);
     SDL_SetColors(font, pal, 0, 2);
