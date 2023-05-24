@@ -1,5 +1,7 @@
 // ./makefont.py xterm7x14.pnm 0 0 14 7 14 14
 // (With a few hacks)
+// This font is based on CP 850 (actually, 858).
+
 #define FONT_W 7
 #define FONT_H 14
 
