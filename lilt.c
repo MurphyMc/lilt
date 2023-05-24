@@ -466,6 +466,9 @@ int main (int argc, char * argv[])
 #endif
 
   vt = tmt_open(term_h, term_w, terminal_callback, NULL, acs);
+#ifdef TMT_UNICODE_MAP
+  tmt_set_unicode_decode(vt, true);
+#endif
 
   if (!screen || !font || !vt) return 1;
 

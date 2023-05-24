@@ -28,6 +28,11 @@ if (LILT_TITLE_SET)
   add_definitions(-DLILT_TITLE_SET)
 endif ()
 
+set(TMT_UNICODE_MAP "true" CACHE BOOL "Map some Unicode characters to ACS / DEC Special Graphics")
+if (TMT_UNICODE_MAP)
+  add_definitions(-DTMT_UNICODE_MAP)
+endif ()
+
 set(TMT_MODE_MSGS "true" CACHE BOOL "libtmt has TMT_MSG_(UN)SETMODE")
 if (TMT_MODE_MSGS)
   add_definitions(-DTMT_MODE_MSGS)
