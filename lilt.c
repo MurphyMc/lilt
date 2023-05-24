@@ -380,20 +380,20 @@ int main (int argc, char * argv[])
   int cursor_blink_delay = 0; // 0 is disable
   bool resizable = true;
 
-  int opt_count = 0;
+  int opt_max = 0;
   int opt_e_index = -1;
   char * title = DEFAULT_TITLE;
   int opt;
   while ((opt = getopt(argc, argv, "+s:et:d:b:mM")) != -1)
   {
-    opt_count++;
+    opt_max = optind;
     switch (opt)
     {
       case 's':
         init_slave(optarg, argv+optind);
         break;
       case 'e':
-        opt_e_index = opt_count;
+        opt_e_index = optind;
         break;
       case 't':
         title = optarg;
@@ -420,17 +420,17 @@ int main (int argc, char * argv[])
 
   char ** run_cmd = NULL;
   char * cshell = NULL;
-  if (opt_e_index == opt_count)
+  if (opt_e_index == opt_max)
   {
     // Given a command to run
-    run_cmd = argv + opt_e_index + 1;
+    run_cmd = argv + opt_e_index;
   }
   else if (optind == argc - 1)
   {
     cshell = argv[optind];
   }
-  //printf("argc:%i optind:%i opt_count:%i opt_e_index:%i\n",
-  //       argc, optind, opt_count, opt_e_index);
+  //printf("argc:%i optind:%i opt_max:%i opt_e_index:%i\n",
+  //       argc, optind, opt_max, opt_e_index);
 
   for (int i = 0; i < 16; i++)
   {
