@@ -231,7 +231,7 @@ static bool init_master (char * argv0, char * cshell, char ** run_cmd)
 
 void init_slave (char * arg, char * argv[])
 {
-  setenv("TERM", "ansi", 1);
+  setenv("TERM", "linux", 1);
   setenv("LANG", "", 1);
 
   char buf[10];
