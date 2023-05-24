@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#include <locale.h>
 
 #include "libtmt/tmt.h"
 
@@ -374,6 +375,8 @@ static void handle_mouse (int sdlbutton, int scrx, int scry, int event)
 
 int main (int argc, char * argv[])
 {
+  setlocale(LC_ALL, "");
+
   int cursor_blink_delay = 0; // 0 is disable
   bool resizable = true;
 
