@@ -26,25 +26,12 @@ and macOS (see the "Building for macOS" section for more on the latter).
 
 ## Building
 
-Lilt can be compiled either using the Rogo build system or using CMake.
-These two options are detailed in the following subsections.
-
+Lilt can be compiled using CMake as described in the following section.
 For simple scenarios, it can also be pretty trivially compiled entirely
 by hand -- just compile `lilt.c` and `libtmt/tmt.c` and link them with
 libSDL.
 
 If you're building on macOS, please see the subsection below.
-
-### Rogo
-
-To compile Lilt using the Rogo build system, install Rogue 1.5.1 or better
-from here:
-
-[https://github.com/AbePralle/Rogue](https://github.com/AbePralle/Rogue)
-
-Then execute the following to build Lilt on Ubuntu or macOS:
-
-    rogo
 
 ### CMake
 
@@ -64,27 +51,20 @@ You should then be able to build with `cmake --build .`.
 
 ### Building for macOS
 
-With macOS, building Lilt probably takes a bit of effort if you're
-using Mojave (and probably future versions).  A change in Mojave results
-in SDL-based applications having blank windows (this problem isn't unique
-to Lilt and affects other things including stuff like PyGame).  Until
-it gets fixed, you might try building your own version of SDL using a
-[patch](https://github.com/joncampbell123/dosbox-x/commit/fdf6061c)
-from DOSBox-X (if you do this, let me know if it works!).
+In 2020, applications using SDL were getting blank windows when compiled
+on macOS Mojave.  This affected Lilt as well as other things, such as
+PyGame.  Hopefully this has since been fixed, but I haven't built on
+macOS for years, so I wouldn't know.  If you try it, let me know your
+results!
 
-If that sounds like a pain, the other option is to build Lilt using an
-older version of the macOS SDK.  If you use the Rogo build method above
-it will guide you through the necessary steps.
-
-If you'd rather do it by hand but you don't have an old Xcode installed,
-here are the basic steps to do it using the "Command Line Tools for
-Xcode 10.1" which are available from Apple's developer website.
-
-You can find the command line tools on Apple's developer website in the
-["more" downloads area](https://developer.apple.com/download/more/).  You
-want "Command Line Tools (macOS 10.13) for Xcode 10.1".  Mount the `.dmg`
-file.  Then in a terminal in the Lilt directory, you should be able to do
-something like:
+If you *do* find that you get a blank window, however, the way I got
+success was by building with an older version of the macOS SDK.  To do
+this without an old version of Xcode, you can download an old version
+of the command line build tools from Apple's developer website in the
+["More Downloads" area](https://developer.apple.com/download/all/).
+Specifically, you are looking for the "Command Line Tools (macOS 10.13)
+for Xcode 10.1".  Once you've got them, mount the `.dmg` file.  Then in
+a terminal in the Lilt directory, you should be able to do something like:
 ```
 pkgutil --expand-full /Volumes/Command*Tools/*10.13*.pkg CLT10_1
 SDK=$(pwd)/$(find CLT10_1 -name MacOSX.sdk)
@@ -93,6 +73,12 @@ cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DMAC_SDK_ROOT="$SDK" .
 
 If all goes successsfully, you should now be able to do `cmake --build .`
 as usual!
+
+Another possibility is to try building your own version of SDL using a
+[patch](https://github.com/joncampbell123/dosbox-x/commit/fdf6061c)
+from DOSBox-X (if you do this, let me know if it works!).
+
+But, again, I hope someone has fixed this by now.
 
 ## Commandline options
 
