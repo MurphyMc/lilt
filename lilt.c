@@ -729,7 +729,7 @@ static inline void draw_cell (size_t x, size_t y, TMTCHAR * c)
 
   dstrect.x = FONT_W * x + tweakx;
   dstrect.y = FONT_H * y + tweaky;
-  unsigned cc = c->c & 0x1ff;
+  unsigned cc = c->c;
   if (cc > FONT_CHAR_COUNT) cc = '?';
   srcrect.y = FONT_H * cc;
 
