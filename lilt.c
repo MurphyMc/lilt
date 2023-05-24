@@ -83,15 +83,13 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
       key = TMT_KEY_HOME;
       break;
     case SDLK_END:
-      //key = TMT_KEY_END;
-      key = "\033OF";
+      key = TMT_KEY_END;
       break;
     case SDLK_INSERT:
       key = TMT_KEY_INSERT;
       break;
     case SDLK_BACKSPACE:
-      //key = TMT_KEY_BACKSPACE;
-      key = "\x7f";
+      key = TMT_KEY_BACKSPACE;
       break;
     case SDLK_ESCAPE:
       key = TMT_KEY_ESCAPE;
@@ -132,16 +130,26 @@ static void handle_sdl_keypress (SDL_KeyboardEvent * event)
     case SDLK_F10:
       key = TMT_KEY_F10;
       break;
-
-    case SDLK_DELETE:
-      key = "\x1b[3~";
+#ifdef TMT_KEY_F11
+    case SDLK_F11:
+      key = TMT_KEY_F11;
       break;
+#endif
+#ifdef TMT_KEY_F12
+    case SDLK_F12:
+      key = TMT_KEY_F12;
+      break;
+#endif
+
+#ifdef TMT_KEY_DELETE
+    case SDLK_DELETE:
+      key = TMT_KEY_DELETE;
+      break;
+#endif
 
     case SDLK_TAB:
       if (shift)
-      {
         key = TMT_KEY_BACK_TAB;
-      }
       break;
 
     default: // Silence warnings
